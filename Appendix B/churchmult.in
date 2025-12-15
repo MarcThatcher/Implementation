@@ -1,0 +1,85 @@
+// mult(r,n)><m -> r=m*n
+
+// represent Church n as app/dup combos
+// Lam(head,body)~p ' app(up,down)~p;
+
+// 1 calc value of m (and erase it)
+// 2 if zero, return zero & erase n
+// 3 if 1, return n
+// 4 else calc value of n (but keep it)
+// 5 if zero, return zero & erase n
+// 6 else add in (m-1) copies of n delta/apps 
+
+
+// 0 mult(r,n)><m -> r=m*n
+    mult(r,n)><Lam(h,b) => mVal(r,n)~res, count(res,0)~h, CountEnd~b;
+
+// 1 calc value of m (and erase it)
+    CountEnd><Lam(h,b)          => Eps~h, Eps~b;
+
+    // if head of lambda term is an Eps then no Apps so return 0
+    count(r, int x) >< Eps => r~Z;      // using Z and (below) One because can't use 0,1
+
+    // else if immediately find an App rather than a delta, is 1
+    count(r, int x) >< App(a1,a2) => r~One, Eps~a1, Eps~a2;
+
+    // else move up, counting deltas and deleting Apps
+    count(r, int x) >< Delta(d1,d2) => countD(r,x+1)~d1, Eps~d2;    // need to change agent to countD to prevent firing rule for 1
+    countD(r,int x) >< Delta(d1,d2) => countD(r,x+1)~d1, Eps~d2;
+    countD(r,int x) >< App(a1,a2)   => r~(x+1), Eps~a1, Eps~a2;
+
+// 2 if zero, return zero & erase n
+    mVal(r,n) >< Z => r~Lam(Eps,b), Lam(h',h')~b, Eps~n;
+
+// 3 if 1, return n
+    mVal(r,n) >< One => r~n; 
+
+// 4 else calc value of n (but keep it)
+    mVal(r,n) >< (int m) => mult'(r, m)~n;
+    mult'(r,int m) >< Lam(h,b) => mult2(r,l,m)~c, countN(c,aux,0)~h, Lam(aux,b)~l;
+    countN(r,aux,int m) >< Eps          => r~Z, Eps~aux;              // hit an Eps immediately => is 0, so return 0 & erase n
+    countN(r,aux,int m) >< App(a1,a2)   => r~(m+1), App(a1,a2)~aux;   // finished deltas, so return m+1 & rewire n
+    countN(r,aux,int m) >< Delta(d1,d2) => countN(r,aux',m+1)~d1, Delta(aux',d2)~aux; 
+
+// 5 if zero, return zero & erase n
+    mult2(r, n, int m) >< Z => r~Lam(Eps,b), Lam(h',h')~b, Eps~n;
+
+// 6 else need to add n to itself m times
+    mult2(r, n, int m) >< (int n') => mult2'(r, m, n')~n;    // n' is int value of church n
+    mult2'(r, int m, int n') >< Lam(h,b) => Lam(h',b)~r, plus(h',m-1,n',n')~h;  // m-1 so don't add too many (e.g. 2x3 => want to add 3 to the existing 3 once, not twice)
+    // plus is going to work down to Deltas and add Apps/Deltas ; n1 counts down , n2 is so know what to reset to
+    plus(r, int m, int n1,int n2) >< Delta(d1,d2) => plus(d3,m,n1,n2)~d1, Delta(d3,d2)~r;
+    plus(d3, int m, int n1, int n2) >< App(a1,a2) |  m==0  => App(a1,a2)~d3
+                                                  |  n1==0 => plus(d3, m-1, n2, n2) ~ App(a1,a2)
+                                                  |  _     => App(a1,a3)~plus(d4,m,n1-1,n2), App(a3,a2)~d5, Delta(d4,d5)~d3;
+
+// erasing interactions
+    Eps >< Eps          => ;
+    Eps >< App(a1,a2)   => Eps~a1, Eps~a2;
+    Eps >< Lam(h,b)     => Eps~h, Eps~b;
+    Eps >< Delta(d1,d2) => Eps~d1, Eps~d2;
+
+
+// rule to convert Church numeral to int
+    conv(r, int x) >< Lam(h,b)   => conv(r,x)~h, CountEnd~b;
+    conv(r, int x) >< Eps        => r~0;
+    conv(r, int x) >< App(a1,a2) => r~1, Eps~a1, Eps~a2;
+    conv(r, int x) >< Delta(d1,d2) => convD(r,x+1)~d1, Eps~d2;
+    convD(r,int x) >< Delta(d1,d2) => convD(r,x+1)~d1, Eps~d2;
+    convD(r,int x) >< App(a1,a2)   => r~(x+1), Eps~a1, Eps~a2;
+
+
+// examples
+    // zero = lam f. lam x . x
+    zero ~ Lam(Eps,b), Lam(h',h')~b;
+
+    // one = lam f. lam x. (fx)
+    one ~ Lam(h,b), Lam(h',b')~b, App(b',h')~h;
+
+    // two = lam f. lam x. f(fx)
+    two ~ Lam(h,b),Lam(h',b')~b,App(b',a1)~d1, App(a1,h')~d2, Delta(d1,d2)~h;
+    two' ~ Lam(h,b),Lam(h',b')~b,App(b',a1)~d1, App(a1,h')~d2, Delta(d1,d2)~h;
+
+    // three
+    three ~ Lam(h,b),Lam(h',b')~b,App(b',a1)~d1, App(a1,a2)~d2, App(a2,h')~d3, Delta(d1,d2)~d4, Delta(d4,d3)~h;
+
