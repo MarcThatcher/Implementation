@@ -1,0 +1,13 @@
+m902185:optiscope mt689$ ./command/example.sh mult
+
+(λ (λ (1 (1 (1 (1 (1 (1 0))))))))Annihilation interactions: 42
+
+Commutation interactions: 80
+
+Beta interactions: 7
+
+Native function calls: 0
+
+If-then-elses: 0
+
+Total interactions: 129
