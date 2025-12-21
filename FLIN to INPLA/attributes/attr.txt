@@ -1,0 +1,9 @@
+-- attributes test file
+-- no blank lines, please! (including at the end)
+-- careful with variable names: r,s,t,u,v... may cause problems due to internal naming; stick to variations of x,y,z
+-- attributes: no brackets, sorry
+--
+id(Num.x) = Num.x
+--
+addX.x(Num.y) = Num.x+y
+add(Num.x,y)  = addX.x(y)

@@ -1,0 +1,28 @@
+-- Thue-Morse file
+-- no blank lines, please (including at end)!
+-- careful with variable names: r,s,t,u,v... may cause problems due to internal naming
+-- comments only full line, cannot mix with function definitions
+--
+-- base cases included for debugging
+--
+d(Nil)  = Nil | Nil
+d(Z(x)) = let [x1,x2]~d(x) in Z(x1) | Z(x2)
+d(O(x)) = let [x1,x2]~d(x) in O(x1) | O(x2)
+--
+inv(Nil)  = Nil
+inv(Z(x)) = O(inv(x))
+inv(O(x)) = Z(inv(x))
+--
+tail(Z(x)) = x
+tail(O(x)) = x
+--
+even(Nil) = Nil
+even(Z(x)) = Z(odd(x))
+even(O(x)) = O(odd(x))
+odd(Nil) = Nil
+odd(Z(x)) = even(x)
+odd(O(x)) = even(x)
+--
+zip(Nil,y)  = y
+zip(Z(x),y) = Z(zip(y,x))
+zip(O(x),y) = O(zip(y,x))

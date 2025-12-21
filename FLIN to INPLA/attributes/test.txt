@@ -1,0 +1,29 @@
+-- test file
+-- no blank lines, please!
+-- careful with variable names: r,s,t,u,v... may cause problems due to internal naming; stick to variations of x,y,z
+--
+id(Z) = Z
+id(S(x)) = S(id(x))
+--
+add(Z,y)    = y
+add(S(x),y) = S(add(x,y))
+--
+d(Z)    = Z|Z
+d(S(x)) = let [x1,x2]~d(x) in S(x1)|S(x2)
+--
+e(Z)    = _
+e(S(x)) = e(x)
+--
+mult(Z,y)    = Z | e(y)
+mult(S(x),y) = let [y1,y2]~d(y) in add(mult(x,y1),y2)
+--
+len(Nil)        = Z
+len(Cons(x,xs)) = S(len(xs)) | e(x)
+--
+fact(Z)    = S(Z)
+fact(S(x)) = let [x1,x2]~d(x) in mult(fact(x1),S(x2))
+--
+ack(Z,y)     = S(y)
+ack(S(x),y)  = ackp(y,x)
+ackp(Z,x)    = ack(x,S(Z))
+ackp(S(y),x) = let [x1,x2]~d(x) in ack(x1,ack(S(x2),y))
