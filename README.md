@@ -6,3 +6,5 @@ Optiscope is available at https://github.com/etiamz/optiscope.
 
 Appendix B - INPLA source code for 3*2 in Church numerals "hand crafted".
 INPLA is available at https://github.com/inpla/inpla.
+
+FLIN to INPLA - two transpilers from FLIN to INPLA. See README therein for more.
