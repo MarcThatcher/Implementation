@@ -1,0 +1,3 @@
+To be used in ghci.
+Types, constructors and functions built in -- see lines 18 - 27.
+Use parseTerm (with "base" FLIN syntax) to get term t, and then derive t funcTypes constrTypes  
