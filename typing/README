@@ -1,3 +1,7 @@
 To be used in ghci.
 Types, constructors and functions built in -- see lines 18 - 27.
-Use parseTerm (with "base" FLIN syntax) to get term t, and then derive t funcTypes constrTypes  
+Use by ' d "<FLIN term>" '.
+Returns Just <type> if succeeds, else Nothing.
+
+Note: uses base FLIN so no attributes or sugar.
+Also let statements are of the form "let [<vars>]~<term> in <term>", e.g. "let [x1,x2]~d(x) in S(x1)|S(x2)".
