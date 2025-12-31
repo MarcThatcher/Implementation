@@ -154,19 +154,6 @@ unify (ConstrType c1 c1param, ConstrType c2 c2param)
             s2 <- unify (sub (t2, s1), sub (t4, s1))
             return (subUnifiers (s2, s1))
     | otherwise = Nothing
--- unify (ConstrType c1 c1param, ConstrType c2 c2param) 
---                             = if c1/=c2 then Nothing 
---                               else if length c1param == 1 then 
---                                 let [t1] = c1param
---                                     [t2] = c2param
---                                 in unify (t1,t2)
---                                 else -- length 2
---                                     let [t1,t2] = c1param
---                                         [t3,t4] = c2param
---                                     in do
---                                         s1 <- unify (t1, t3)
---                                         s2 <- unify (sub (t2, s1), sub (t4, s1))
---                                         return (subUnifiers (s2, s1))
 
 sub :: (Type, [(Type,Type)]) -> Type
 sub (t, subs) = foldl (\acc s -> subOne (acc, s)) t subs
@@ -187,13 +174,3 @@ subUnifiers (pairs, subs) =
     in if pairs' == pairs 
        then pairs ++ subs
        else pairs'
-
--- derive (Constr "S" [Constr "Z" []]) funcTypes constrTypes
--- derive (Constr "Z" []) funcTypes constrTypes
--- derive (Func "isZ" [Constr "Z" []]) funcTypes constrTypes
--- derive (Func "add" [Constr "Z" [],Constr "Z" []]) funcTypes constrTypes
--- derive (Let (Func "d" [Var "x"]) ["x1","x2"] (Func "add" [Var "x1",Var "x2"])) funcTypes constrTypes
--- derive (Let (Func "d" [Var "x"]) ["x1","x2"] (Par (Constr "S" [Var "x1"]) (Constr "S" [Var "x2"]))) funcTypes constrTypes
--- derive (Let (Constr "Z" []) ["x"] (Var "x")) funcTypes constrTypes
-
--- d = FuncType [VarType "A"] (ParType [VarType "A", VarType "A"])
